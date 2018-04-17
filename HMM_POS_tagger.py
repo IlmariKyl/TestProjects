@@ -2,6 +2,16 @@ import nltk, random, itertools, re, copy
 from nltk.tag import hmm
 from nltk.corpus import treebank
 from collections import Counter
+from nltk.metrics import accuracy
+from nltk.tag.util import untag
+import numpy as np
+
+
+'''
+
+Models out-of-vocabulary words in HMM-based Part-Of-Speech tagger for Finnish
+
+'''
 
 
 def read_tagged_sents(file_path):
@@ -17,6 +27,13 @@ def read_tagged_sents(file_path):
         print("Error reading file.")
   
     return tagged_sents
+
+def evaluate(self, gold):
+        "overriding evaluate from nltk.TaggerI, it seems to have a bug"
+        tagged_sents = [list(s) for s in self.tag_sents(untag(sent) for sent in gold)]
+        gold_tokens = sum(gold, [])
+        test_tokens = sum(tagged_sents, [])
+        return accuracy(gold_tokens, test_tokens)
 
 
 def main():
